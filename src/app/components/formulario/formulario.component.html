@@ -1,0 +1,79 @@
+<div class="container py-4 bg-light min-vh-100" style="max-width: 900px;">
+    
+  <div class="card shadow-sm border-0 mb-4">
+    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center py-2">
+      <h6 class="mb-0">📊 Mi Nuevo Sistema de Costos</h6>
+      <button type="button" class="btn btn-danger btn-sm fw-bold shadow-sm" (click)="salir()">
+  ❌ SALIR
+</button>
+    </div>
+
+    <div class="card-body">
+      <form (ngSubmit)="guardar()">
+        <div class="mb-3">
+          <label class="small fw-bold text-muted">🚀 Nombre del Proyecto</label>
+          <input type="text" name="n" [(ngModel)]="proyecto.nombre" class="form-control form-control-sm" placeholder="Escribe el nombre aquí">
+        </div>
+
+        <div class="row g-2 mb-3">
+          <div class="col-md-4">
+            <label class="small fw-bold text-muted">🕒 Horas Est.</label>
+            <input type="number" name="he" [(ngModel)]="proyecto.horasEstimadas" class="form-control form-control-sm">
+          </div>
+          <div class="col-md-4">
+            <label class="small fw-bold text-muted">⏱️ Horas Reales</label>
+            <input type="number" name="hr" [(ngModel)]="proyecto.horasReales" class="form-control form-control-sm">
+          </div>
+          <div class="col-md-4">
+            <label class="small fw-bold text-muted">💰 Costo/Hora</label>
+            <input type="number" name="ch" [(ngModel)]="proyecto.costoHora" class="form-control form-control-sm">
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-success w-100 fw-bold shadow-sm">
+          💾 CALCULAR Y GUARDAR EN FIREBASE
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <div class="row g-3 mb-4">
+    <div class="col-md-6">
+      <div class="card shadow-sm border-0 p-2">
+        <div id="grafica_barras" style="height: 250px;"></div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="card shadow-sm border-0 p-2">
+        <div id="grafica_evolucion" style="height: 250px;"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card shadow-sm border-0">
+    <div class="table-responsive">
+      <table class="table table-sm table-hover align-middle mb-0 text-center">
+        <thead class="table-dark">
+          <tr>
+            <th style="width: 30%">Proyecto</th>
+            <th style="width: 20%">Costo Real</th>
+            <th style="width: 20%">Variación</th>
+            <th style="width: 20%">Estado</th>
+            <th style="width: 10%">Acción</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let p of proyectos$ | async">
+            <td class="fw-bold">{{p.nombre}}</td>
+            <td>${{ (p.horasReales * p.costoHora) | number }}</td>
+            <td class="text-danger fw-bold">+${{ (p.horasReales - p.horasEstimadas) * p.costoHora | number }}</td>
+            <td><span class="badge bg-danger">🚩 Sobrecosto</span></td>
+            <td>
+              <button (click)="eliminar(p.id!)" class="btn btn-danger btn-sm rounded-circle shadow-sm">🗑️</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
