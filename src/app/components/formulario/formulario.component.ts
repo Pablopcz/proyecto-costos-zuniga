@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, HostListener } from '@angular/core'; // <-- AGREGADO: HostListener
+import { Component, OnInit, inject, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ProyectosService } from '../../services/proyectos.service';
@@ -20,13 +20,10 @@ export class FormularioComponent implements OnInit {
 
   constructor(private router: Router) {}
 
-  // --- TRUCO PARA LA X DEL NAVEGADOR ---
   @HostListener('window:beforeunload', ['$event'])
   unloadNotification($event: any) {
-    // Esto activa el aviso automático del navegador al intentar cerrar la pestaña
     $event.returnValue = true;
   }
-  // -------------------------------------
 
   proyecto = { nombre: '', horasEstimadas: 0, horasReales: 0, costoHora: 0 };
   proyectos$!: Observable<any[]>;
@@ -40,6 +37,21 @@ export class FormularioComponent implements OnInit {
       }
     });
   }
+
+  // --- LÓGICA DE CÁLCULOS PARA LA TABLA ---
+  
+  calcularVariacion(p: any): number {
+    return (p.horasReales - p.horasEstimadas) * p.costoHora;
+  }
+
+  obtenerEstado(p: any) {
+    const v = this.calcularVariacion(p);
+    if (v > 0) return { texto: 'Sobrecosto', clase: 'bg-danger', emoji: '🚩' };
+    if (v < 0) return { texto: 'Ahorro', clase: 'bg-success', emoji: '💰' };
+    return { texto: 'A punto', clase: 'bg-primary', emoji: '✅' };
+  }
+
+  // --- MÉTODOS DE ACCIÓN ---
 
   guardar() {
     if (this.proyecto.nombre) {
@@ -93,10 +105,9 @@ export class FormularioComponent implements OnInit {
     chartLinea.draw(dataLinea, optionsLinea);
   }
 
-salir() {
-  if (confirm("¿Seguro que quieres cerrar sesión y volver al inicio?")) {
-    this.router.navigate(['/login']);
+  salir() {
+    if (confirm("¿Seguro que quieres cerrar sesión y volver al inicio?")) {
+      this.router.navigate(['/login']);
+    }
   }
-}
-
 }

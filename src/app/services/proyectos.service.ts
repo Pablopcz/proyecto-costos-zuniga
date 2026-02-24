@@ -9,7 +9,6 @@ export class ProyectosService {
 
   getProyectos() {
     const proyectosRef = ref(this.db, 'proyectos');
-    // El keyField: 'id' permite que cada fila sepa cuál es su ID de borrado
     return listVal(proyectosRef, { keyField: 'id' });
   }
 
